@@ -26,6 +26,7 @@ namespace YueHuan.Crypto
         }
         #endregion
 
+
         #region MD5加密字符串
         /// <summary>
         /// MD5加密字符串
