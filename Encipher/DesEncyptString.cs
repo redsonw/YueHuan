@@ -1,10 +1,15 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace YueHuan.Crypto
+namespace YueHuan.Encipher
 {
     public class DesEncyptString
     {
+        /// <summary>
+        /// 默认密钥向量
+        /// </summary>
+        private static readonly byte[] Keys = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
+
         /// <summary>
         /// DES加密字符串
         /// </summary>

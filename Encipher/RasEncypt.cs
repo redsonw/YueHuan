@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace YueHuan.Crypto
+namespace YueHuan.Encipher
 {
     /// <summary>
     /// 非对称加密类，使用Ras加密方式

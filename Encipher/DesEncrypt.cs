@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace YueHuan.Crypto
+namespace YueHuan.Encipher
 {
     public class DesEncrypt
     {

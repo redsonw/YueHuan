@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace YueHuan.Crypto
+namespace YueHuan.Encipher
 {
     public class FileEncrypt
     {
