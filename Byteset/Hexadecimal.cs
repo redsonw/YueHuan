@@ -12,6 +12,10 @@
             this.filePath = filePath; // 初始化文件路径
         }
 
+        /// <summary>
+        /// 读取文件
+        /// </summary>
+        /// <returns>读取成功返回byte[]，失败返回null</returns>
         public virtual byte[]? ReadFile()
         {
             if (File.Exists(filePath)) // 判断文件是否存在
@@ -34,6 +38,13 @@
             }
         }
 
+        /// <summary>
+        /// 查找十六进制字符串
+        /// <br/>
+        /// <br/><paramref name="hexValue"/>    十六进制字节，格式：00 00 1F 2A
+        /// </summary>
+        /// <param name="hexString">十六进制字符串</param>
+        /// <returns>成功返回true，失败返回false。</returns>
         public virtual bool FindHex(string hexString)
         {
             byte[]? bytes = ReadFile();
@@ -74,6 +85,13 @@
 
         }
 
+        /// <summary>
+        /// 查找十六进制数
+        /// <br/>
+        /// <br/><paramref name="hexValue"/>    十六进制字节，格式：0x00001F2A
+        /// </summary>
+        /// <param name="hexValues"></param>
+        /// <returns>成功返回true,失败返回false。</returns>
         public virtual bool FindHex(byte[] hexValues)
         {
             byte[]? bytes = ReadFile();
@@ -105,6 +123,13 @@
             return false;
         }
 
+        /// <summary>
+        /// 查找十六进制字节
+        /// <br/>
+        /// <br/><paramref name="hexValue"/>    十六进制字节，格式：0x00,0x00,0x1F,0x2A
+        /// </summary>
+        /// <param name="hexValue"></param>
+        /// <returns>成功返回true，失败返回false。</returns>
         public virtual bool FindHex(uint hexValue)
         {
             byte[]? bytes = ReadFile();
@@ -120,7 +145,15 @@
 
             return FindHex(hexValues);
         }
-
+        /// <summary>
+        /// 替换十六进制字符串
+        /// <br/>
+        /// <br/><paramref name="oldHexString"/>    欲替换的十六进制字符串，格式：00 00 1F 2A
+        /// <br/><paramref name="newHexString"/>    新的十六进制字符串，格式：00 00 1F 2A
+        /// </summary>
+        /// <param name="oldHexString"></param>
+        /// <param name="newHexString"></param>
+        /// <returns></returns>
         public virtual bool ReplaceHex(string oldHexString, string newHexString)
         {
             byte[]? bytes = ReadFile();
@@ -185,7 +218,15 @@
                 return false;
             }
         }
-
+        /// <summary>
+        /// 替换十六进制数 
+        /// <br/>
+        /// <br/><paramref name="oldHexValues"/>    欲替换的十六进制数，格式：0x00001F2A<br/>
+        /// <paramref name="newHexValues"/> 新的十六进制数，格式：0x00001F2A<br/>
+        /// </summary>
+        /// <param name="oldHexValues">欲替换的十六进制数</param>
+        /// <param name="newHexValues">新的十六进制数</param>
+        /// <returns>成功返回true，失败返回false。</returns>
         public virtual bool ReplaceHex(byte[] oldHexValues, byte[] newHexValues)
         {
             byte[]? bytes = ReadFile();
@@ -234,7 +275,14 @@
                 return false;
             }
         }
-
+        /// <summary>
+        /// 替换十六进制字节 <br/>
+        /// <br/><paramref name="oldHexValue"/> 欲替换的十六进制字节，格式：0x00,0x00,0x1F,0x2A
+        /// <br/><paramref name="newHexValue"/> 新的十六进制字节，格式：0x00,0x00,0x1F,0x2A
+        /// </summary>
+        /// <param name="oldHexValue"></param>
+        /// <param name="newHexValue"></param>
+        /// <returns>成功返回true，失败返回false。</returns>
         public virtual bool ReplaceHex(uint oldHexValue, uint newHexValue)
         {
             byte[] oldHexValues = BitConverter.GetBytes(oldHexValue); // 将原十六进制uint转换成字节
