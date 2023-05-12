@@ -4,9 +4,9 @@ using System.Management;
 using System.ServiceProcess;
 using YueHuan.Models;
 
-namespace YueHuan.Common
+namespace YueHuan.Systemaitc
 {
-    public class WindowsService
+    public class Service
     {
         /// <summary>
         /// 获取指定名称的Windows服务对象
@@ -15,9 +15,7 @@ namespace YueHuan.Common
         /// <returns>服务对象</returns>
         private static ServiceController GetService(string serviceName)
         {
-            // 实例化一个ServiceController对象
-            ServiceController sc = new(serviceName);
-            return sc;
+            return new ServiceController(serviceName);
         }
 
         /// <summary>
@@ -29,11 +27,10 @@ namespace YueHuan.Common
             // 获取指定名称的服务对象
             ServiceController sc = GetService(serviceName);
 
-            // 如果服务当前状态不是Running，则启动服务
             if (sc.Status != ServiceControllerStatus.Running)
             {
                 sc.Start();
-                sc.WaitForStatus(ServiceControllerStatus.Running);
+                sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
             }
         }
 
@@ -46,11 +43,10 @@ namespace YueHuan.Common
             // 获取指定名称的服务对象
             ServiceController sc = GetService(serviceName);
 
-            // 如果服务当前状态是Running，则停止服务
             if (sc.Status == ServiceControllerStatus.Running)
             {
                 sc.Stop();
-                sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
             }
         }
 
@@ -63,14 +59,12 @@ namespace YueHuan.Common
             // 获取指定名称的服务对象
             ServiceController sc = GetService(serviceName);
 
-            // 如果服务当前状态是Running，则先停止服务，再启动服务
             if (sc.Status == ServiceControllerStatus.Running)
             {
-                sc.Stop();
-                sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                StopService(serviceName);
             }
-            sc.Start();
-            sc.WaitForStatus(ServiceControllerStatus.Running);
+
+            StartService(serviceName);
         }
 
         /// <summary>
@@ -83,16 +77,7 @@ namespace YueHuan.Common
             // 获取指定名称的服务对象
             ServiceController sc = GetService(serviceName);
 
-            if (sc == null)
-            {
-                // 如果服务不存在或未启动，则返回空字符串
-                return string.Empty;
-            }
-            else
-            {
-                // 返回服务状态
-                return sc.Status.ToString();
-            }
+            return sc.Status.ToString();
         }
 
         /// <summary>
@@ -105,8 +90,7 @@ namespace YueHuan.Common
             // 获取指定名称的服务对象
             ServiceController sc = GetService(serviceName);
 
-            // 返回服务配置信息
-            return sc.DisplayName + ": " + sc.ServiceType + ", " + sc.StartType + ", " + sc.CanPauseAndContinue;
+            return $"{sc.DisplayName}: {sc.ServiceType}, {sc.StartType}, {sc.CanPauseAndContinue}";
         }
 
         /// <summary>
@@ -126,66 +110,79 @@ namespace YueHuan.Common
         /// <summary>
         /// 获取指定的Windwos服务信息
         /// </summary>
-        /// <param name="serviceName"></param>
-        /// <returns></returns>
+        /// <param name="serviceName">服务名称</param>
+        /// <returns>服务信息</returns>
         public static ServerInfo? GetServiceExecutablePath(string serviceName)
         {
-            ServerInfo? serverInfo = new();
             try
             {
-
-                if (IsServiceExists(serviceName))
+                // 如果服务不存在或未启动，则返回null
+                if (!IsServiceExists(serviceName))
                 {
-                    using ServiceController sc = new(serviceName);
-                    // 获取服务的 WMI 配置信息
-                    ManagementObject serviceConfig = new($"Win32_Service.Name='{serviceName}'");
+                    return null;
+                }
 
+                using (ServiceController sc = GetService(serviceName))
+                {
                     // 获取服务可执行文件路径
-                    serverInfo.PathName = serviceConfig["PathName"].ToString(); // 服务可执行文件的路径
-                    serverInfo.DisplayName = serviceConfig["DisplayName"].ToString();
-                    //  serverInfo.Description = serviceConfig["Description"].ToString();
-                    serverInfo.StartMode = serviceConfig["StartMode"].ToString();
-                    serverInfo.ErrorControl = serviceConfig["ErrorControl"].ToString();
-                    serverInfo.StartName = serviceConfig["StartName"].ToString();
-                    // serverInfo.Dependencies = serviceConfig["Dependencies"].ToString();
+                    ManagementObject serviceConfig = new($"Win32_Service.Name='{serviceName}'");
+                    serviceConfig.Get();
+                    string? pathName = serviceConfig["PathName"].ToString();
+                    string? displayName = serviceConfig["DisplayName"].ToString();
+                    string? startMode = serviceConfig["StartMode"].ToString();
+                    string? errorControl = serviceConfig["ErrorControl"].ToString();
+                    string? startName = serviceConfig["StartName"].ToString();
 
                     // 去掉服务路径中的引号和参数
-                    serverInfo.PathName = serverInfo.PathName?.Trim('"').Split(' ')[0];
-                }
-                else
-                {
-                    serverInfo = null;
+                    pathName = pathName?.Trim('"').Split(' ')[0];
+
+                    return new ServerInfo
+                    {
+                        PathName = pathName,
+                        DisplayName = displayName,
+                        StartMode = startMode,
+                        ErrorControl = errorControl,
+                        StartName = startName
+                    };
                 }
             }
             catch (Exception ex)
             {
-                // throw new Exception(ex.Message, ex);
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"Error getting service info for {serviceName}: {ex.Message}");
+                return null;
             }
-            return serverInfo;
         }
 
         /// <summary>
         /// 删除指定的Windows服务
         /// </summary>
         /// <param name="serviceName">服务名</param>
-        /// <returns>删除成功则返回true，删除失败则返回false。</returns>
         public static void DeleteService(string serviceName)
         {
-            using Process process = new();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/c sc delete \"{serviceName}\"";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-            process.WaitForExit();
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
-            if (!string.IsNullOrEmpty(error))
+            try
             {
-                throw new Exception($"Failed to delete service {serviceName}. Error message: {error}");
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "sc.exe",
+                    Arguments = $"delete \"{serviceName}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using Process process = Process.Start(startInfo)!;
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    throw new Exception($"Failed to delete service {serviceName}. Error message: {error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting service {serviceName}: {ex.Message}");
             }
         }
 
@@ -196,37 +193,35 @@ namespace YueHuan.Common
         /// <returns>卸载成功则返回true，失败则返回false。</returns>
         public static bool Uninstall(string serviceName)
         {
-            if (ServiceController.GetServices().Any(s => s.ServiceName == serviceName))
+            try
             {
-                using (ServiceController service = new(serviceName))
+                using ServiceController service = new(serviceName);
+
+                if (service.Status == ServiceControllerStatus.Running)
                 {
-                    if (service.Status == ServiceControllerStatus.Running)
+                    StopService(serviceName);
+                }
+
+                using RegistryKey? key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}", true);
+
+                if (key != null)
+                {
+                    object? imagePath = key.GetValue("ImagePath");
+
+                    if (imagePath is string imagePathString && imagePathString.ToLower().Contains("exe"))
                     {
-                        service.Stop();
-                        service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
+                        key.DeleteSubKeyTree(string.Empty);
+                        return true;
                     }
                 }
 
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}", true)!;
-                if (key != null)
-                {
-                    object imagePath = key.GetValue("ImagePath")!;
-                    if (imagePath is string imagePathString && imagePathString.ToLower().Contains("exe"))
-                    {
-                        try
-                        {
-                            key.DeleteSubKeyTree("");
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error deleting service {serviceName}: {ex.Message}");
-                            return false;
-                        }
-                    }
-                }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uninstalling service {serviceName}: {ex.Message}");
+                return false;
+            }
         }
     }
 }
