@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Management;
 using System.ServiceProcess;
+using YueHuan.Models;
 
-namespace YueHuan.Systemaitc
+namespace YueHuan.Common
 {
-    public class Service
+    public class WindowsService
     {
         /// <summary>
         /// 获取指定名称的Windows服务对象
@@ -129,30 +130,27 @@ namespace YueHuan.Systemaitc
         /// <returns></returns>
         public static ServerInfo? GetServiceExecutablePath(string serviceName)
         {
-            ServerInfo serverInfo = new();
+            ServerInfo? serverInfo = new();
             try
             {
 
                 if (IsServiceExists(serviceName))
                 {
-                    using (ServiceController sc = new ServiceController(serviceName))
-                    {
-                        // 获取服务的 WMI 配置信息
-                        ManagementObject serviceConfig = new($"Win32_Service.Name='{serviceName}'");
+                    using ServiceController sc = new(serviceName);
+                    // 获取服务的 WMI 配置信息
+                    ManagementObject serviceConfig = new($"Win32_Service.Name='{serviceName}'");
 
-                        // 获取服务可执行文件路径
-                        serverInfo.PathName = serviceConfig["PathName"].ToString(); // 服务可执行文件的路径
-                        serverInfo.DisplayName = serviceConfig["DisplayName"].ToString();
-                        //  serverInfo.Description = serviceConfig["Description"].ToString();
-                        serverInfo.StartMode = serviceConfig["StartMode"].ToString();
-                        serverInfo.ErrorControl = serviceConfig["ErrorControl"].ToString();
-                        serverInfo.StartName = serviceConfig["StartName"].ToString();
-                        // serverInfo.Dependencies = serviceConfig["Dependencies"].ToString();
+                    // 获取服务可执行文件路径
+                    serverInfo.PathName = serviceConfig["PathName"].ToString(); // 服务可执行文件的路径
+                    serverInfo.DisplayName = serviceConfig["DisplayName"].ToString();
+                    //  serverInfo.Description = serviceConfig["Description"].ToString();
+                    serverInfo.StartMode = serviceConfig["StartMode"].ToString();
+                    serverInfo.ErrorControl = serviceConfig["ErrorControl"].ToString();
+                    serverInfo.StartName = serviceConfig["StartName"].ToString();
+                    // serverInfo.Dependencies = serviceConfig["Dependencies"].ToString();
 
-                        // 去掉服务路径中的引号和参数
-                        serverInfo.PathName = serverInfo.PathName?.Trim('"').Split(' ')[0];
-
-                    }
+                    // 去掉服务路径中的引号和参数
+                    serverInfo.PathName = serverInfo.PathName?.Trim('"').Split(' ')[0];
                 }
                 else
                 {
@@ -174,22 +172,20 @@ namespace YueHuan.Systemaitc
         /// <returns>删除成功则返回true，删除失败则返回false。</returns>
         public static void DeleteService(string serviceName)
         {
-            using (Process process = new Process())
+            using Process process = new();
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.Arguments = $"/c sc delete \"{serviceName}\"";
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            process.WaitForExit();
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            if (!string.IsNullOrEmpty(error))
             {
-                process.StartInfo.FileName = "cmd.exe";
-                process.StartInfo.Arguments = $"/c sc delete \"{serviceName}\"";
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
-                process.WaitForExit();
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                if (!string.IsNullOrEmpty(error))
-                {
-                    throw new Exception($"Failed to delete service {serviceName}. Error message: {error}");
-                }
+                throw new Exception($"Failed to delete service {serviceName}. Error message: {error}");
             }
         }
 
@@ -211,10 +207,10 @@ namespace YueHuan.Systemaitc
                     }
                 }
 
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}", true);
+                using RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}", true)!;
                 if (key != null)
                 {
-                    object imagePath = key.GetValue("ImagePath");
+                    object imagePath = key.GetValue("ImagePath")!;
                     if (imagePath is string imagePathString && imagePathString.ToLower().Contains("exe"))
                     {
                         try
