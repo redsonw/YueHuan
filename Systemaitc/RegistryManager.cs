@@ -6,8 +6,22 @@
 
 namespace YueHuan.Systemaitc
 {
+    public class MethodCommentAttribute : Attribute
+    {
+        public string Name { get; }
+        public string Content { get; }
+
+        public MethodCommentAttribute(string name, string content)
+        {
+            Name = name;
+            Content = content;
+        }
+    }
+
     public class RegistryManager
     {
+
+        [MethodComment("summary", "注册表基项静态域")]
         /// <summary>
         /// 注册表基项静态域
         /// <br/>
