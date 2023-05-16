@@ -50,7 +50,7 @@ namespace YueHuan.Systemaitc
             {
                 if (p == Port)
                 {
-                    IsUse = true; 
+                    IsUse = true;
                 }
             }
             return IsUse;
