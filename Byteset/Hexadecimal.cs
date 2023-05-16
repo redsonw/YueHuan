@@ -2,7 +2,7 @@
 {
     public class Hexadecimal
     {
-        private string filePath; // 文件路径
+        private string filePath { get; set; } = string.Empty; // 文件路径
         /// <summary>
         /// 构造函数
         /// </summary>
