@@ -14,7 +14,7 @@ namespace YueHuan.Encipher
         /// <returns>返回加密后的文本</returns>
         public static string DESEncrypt(string strPlain, string strDESKey, string strDESIV)
         {
-            
+
             byte[] bytesDESKey = Encoding.ASCII.GetBytes(strDESKey);  // 把密钥转换成字节数组
 
             byte[] bytesDESIV = Encoding.ASCII.GetBytes(strDESIV);  // 把向量转换成字节数组
@@ -50,27 +50,27 @@ namespace YueHuan.Encipher
         public static string? DESDecrypt(string strCipher, string strDESKey, string strDESIV)
         {
             byte[] bytesDESKey = Encoding.ASCII.GetBytes(strDESKey); // 把密钥转换成字节数组
-            
+
             byte[] bytesDESIV = Encoding.ASCII.GetBytes(strDESIV);   // 把向量转换成字节数组
-            
+
             byte[] bytesCipher = Encoding.Unicode.GetBytes(strCipher);  // 把密文转换成字节数组
-            
+
             DES desDecrypt = DES.Create();  // 声明1个新的DES对象
-            
+
             MemoryStream msDecrypt = new(bytesCipher);  // 开辟一块内存流，并存放密文字节数组
-            
+
             CryptoStream csDecrypt = new(msDecrypt, desDecrypt.CreateDecryptor(bytesDESKey, bytesDESIV), CryptoStreamMode.Read);  // 把内存流对象包装成解密流对象
-            
+
             StreamReader srDecrypt = new(csDecrypt);  // 把解密流对象包装成读出流对象
-            
+
             string? strPlainText = srDecrypt.ReadLine();  // 明文=读出流的读出内容
-            
+
             srDecrypt.Close();  // 读出流关闭
-            
+
             csDecrypt.Close();  // 解密流关闭
-            
+
             msDecrypt.Close();  // 内存流关闭
-            
+
             return strPlainText;  // 返回明文
         }
     }
