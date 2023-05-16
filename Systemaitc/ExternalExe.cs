@@ -4,46 +4,52 @@ namespace YueHuan.Systemaitc
 {
     public class ProcessExe
     {
+        /// <summary>
+        /// 运行一个外部程序，不需要参数
+        /// </summary>
+        /// <param name="exeName"></param>
+        /// <returns></returns>
         public static bool RunExternalExe(string exeName)
         {
-            bool blExe;
             try
             {
-                Process process = new();
-                ProcessStartInfo startInfo = new(exeName);
-                process.StartInfo = startInfo;
+                Process process = new()
+                {
+                    StartInfo = new ProcessStartInfo(exeName)
+                };
                 process.Start();
-                blExe = true;
+                return true; // 记录成功标记
             }
             catch (Exception ex)
             {
-                blExe = false;
+                Console.WriteLine(ex.ToString());
+                return false; // 记录失败标记
             }
-            return blExe;
         }
 
+        /// <summary>
+        /// 运行一个外部程序，需要传递参数
+        /// </summary>
+        /// <param name="exeName"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static bool RunExternalExe(string exeName, string[] args)
         {
-            bool blExe;
-            string brgs = "";
-            Process process = new();
             try
             {
-                foreach(string a in args)
+                string arguments = string.Join(" ", args); // 将参数数组连接成一个字符串，以空格分隔
+                Process process = new()
                 {
-                    brgs += $"{a} ";
-                }
-                brgs= brgs.Trim();
-                ProcessStartInfo startInfo = new(exeName, brgs);
-                process.StartInfo= startInfo;
+                    StartInfo = new ProcessStartInfo(exeName, arguments)
+                };
                 process.Start();
-                blExe= true;
+                return true; // 记录成功标记
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                blExe = false;
+                Console.WriteLine(ex.ToString());
+                return false; // 记录失败标记
             }
-            return blExe;
         }
 
     }
