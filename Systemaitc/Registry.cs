@@ -120,7 +120,7 @@ namespace YueHuan.Systemaitc
         ///  <summary>
         ///  注册表键值
         ///  </summary>
-        private string _regeditkey;
+        private string _regeditkey { get; set; } = string.Empty;
         #endregion
 
         #region  属性
@@ -129,7 +129,7 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         public string SubKey
         {
-            //get { return _subkey; }
+            get { return _subkey; }
             set { _subkey = value; }
         }
 
@@ -138,7 +138,7 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         public RegistryHive Domain
         {
-            ///get { return _domain; }
+            get { return _domain; }
             set { _domain = value; }
         }
 
@@ -147,7 +147,7 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         public string RegeditKey
         {
-            ///get{return _regeditkey;}
+            get { return _regeditkey; }
             set { _regeditkey = value; }
         }
         #endregion
@@ -181,26 +181,21 @@ namespace YueHuan.Systemaitc
         ///  创建注册表项，默认创建在注册表基项HKEY_LOCAL_MACHINE 下面（请先设置SubKey 属性）
         ///  <para>虚方法，子类可进行重写</para>
         ///  </summary>
-        public virtual void CreateSubKey()
+        public void CreateSubKey()
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空，如果为空，返回
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
-
-            ///要创建的注册表项的节点
-            RegistryKey sKey;
+            // 创建基于注册表基项的节点
+            using RegistryKey? key = GetRegMain(_domain);
+            // 要创建的注册表项的节点
             if (!IsSubKeyExist())
             {
-                sKey = key.CreateSubKey(_subkey);
+                key.CreateSubKey(_subkey);
             }
-            //sKey.Close();
-            ///关闭对注册表项的更改
-            key.Close();
         }
 
         ///  <summary>
@@ -209,53 +204,44 @@ namespace YueHuan.Systemaitc
         ///  例子：如 subkey 是 software\\higame\\，则将创建 HKEY_LOCAL_MACHINE\\software\\higame\\注册表项
         ///  </summary>
         ///  <param name="subKey">注册表项名称</param>
-        public virtual void CreateSubKey(string subKey)
+        public void CreateSubKey(string subKey)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空，如果为空，返回
+            if (string.IsNullOrEmpty(subKey))
             {
                 return;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
-
-            ///要创建的注册表项的节点
-            RegistryKey sKey;
+            // 创建基于注册表基项的节点
+            using RegistryKey key = GetRegMain(_domain);
+            // 要创建的注册表项的节点
             if (!IsSubKeyExist(subKey))
             {
-                sKey = key.CreateSubKey(subKey);
+                key.CreateSubKey(subKey);
             }
-            //sKey.Close();
-            ///关闭对注册表项的更改
-            key.Close();
         }
+
 
         ///  <summary>
         ///  创建注册表项，默认创建在注册表基项HKEY_LOCAL_MACHINE 下面
         ///  虚方法，子类可进行重写
         ///  </summary>
         ///  <param name="regMain">注册表基项域</param>
-        public virtual void CreateSubKey(RegistryHive regMain)
+        public void CreateSubKey(RegistryHive regMain)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空，如果为空，返回
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(regMain);
-
-            ///要创建的注册表项的节点
-            RegistryKey sKey;
+            // 创建基于注册表基项的节点
+            using RegistryKey key = GetRegMain(regMain);
+            // 要创建的注册表项的节点
             if (!IsSubKeyExist(regMain))
             {
-                sKey = key.CreateSubKey(_subkey);
+                key.CreateSubKey(_subkey);
             }
-            //sKey.Close();
-            ///关闭对注册表项的更改
-            key.Close();
         }
 
         ///  <summary>
@@ -265,27 +251,23 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         ///  <param name="subKey">注册表项名称</param>
         ///  <param name="regMain">注册表基项域</param>
-        public virtual void CreateSubKey(string subKey, RegistryHive regMain)
+        public void CreateSubKey(string subKey, RegistryHive regMain)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空，如果为空，返回
+            if (string.IsNullOrEmpty(subKey))
             {
                 return;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(regMain);
-
-            ///要创建的注册表项的节点
-            RegistryKey sKey;
+            // 创建基于注册表基项的节点
+            using RegistryKey key = GetRegMain(regMain);
+            // 要创建的注册表项的节点
             if (!IsSubKeyExist(subKey, regMain))
             {
-                sKey = key.CreateSubKey(subKey);
+                key.CreateSubKey(subKey);
             }
-            //sKey.Close();
-            ///关闭对注册表项的更改
-            key.Close();
         }
+
         #endregion
 
         #region  判断注册表项是否存在
@@ -297,20 +279,27 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回注册表项是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsSubKeyExist()
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空，如果为空，返回 false
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return false;
             }
 
-            ///检索注册表子项
-            ///如果 sKey 为 null,说明没有该注册表项不存在，否则存在
-            RegistryKey sKey = OpenSubKey(_subkey, _domain);
-            if (sKey == null)
+            try
             {
-                return false;
+                // 检索注册表子项
+                using RegistryKey? sKey = OpenSubKey(_subkey, _domain);
+
+                // 如果 sKey 为 null，则说明该注册表项不存在；否则存在
+                return sKey != null;
             }
-            return true;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of subkey '{_subkey}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项是否存在失败
         }
 
         ///  <summary>
@@ -322,20 +311,27 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回注册表项是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsSubKeyExist(string subKey)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空，如果为空，返回 false
+            if (string.IsNullOrEmpty(subKey))
             {
                 return false;
             }
 
-            ///检索注册表子项
-            ///如果 sKey 为 null,说明没有该注册表项不存在，否则存在
-            RegistryKey sKey = OpenSubKey(subKey);
-            if (sKey == null)
+            try
             {
-                return false;
+                // 检索注册表子项
+                using RegistryKey? sKey = OpenSubKey(subKey);
+
+                // 如果 sKey 为 null，则说明该注册表项不存在；否则存在
+                return sKey != null;
             }
-            return true;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of subkey '{subKey}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项是否存在失败
         }
 
         ///  <summary>
@@ -347,20 +343,27 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回注册表项是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsSubKeyExist(RegistryHive regMain)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空，如果为空，返回 false
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return false;
             }
 
-            ///检索注册表子项
-            ///如果 sKey 为 null,说明没有该注册表项不存在，否则存在
-            RegistryKey sKey = OpenSubKey(_subkey, regMain);
-            if (sKey == null)
+            try
             {
-                return false;
+                // 检索注册表子项
+                using RegistryKey? sKey = OpenSubKey(_subkey, regMain);
+
+                // 如果 sKey 为 null，则说明该注册表项不存在；否则存在
+                return sKey != null;
             }
-            return true;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of subkey '{_subkey}' under hive '{regMain}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项是否存在失败
         }
 
         ///  <summary>
@@ -373,20 +376,27 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回注册表项是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsSubKeyExist(string subKey, RegistryHive regMain)
         {
-            ///判断注册表项名称是否为空，如果为空，返回 false
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空，如果为空，返回 false
+            if (string.IsNullOrEmpty(subKey))
             {
                 return false;
             }
 
-            ///检索注册表子项
-            ///如果 sKey 为 null,说明没有该注册表项不存在，否则存在
-            RegistryKey sKey = OpenSubKey(subKey, regMain);
-            if (sKey == null)
+            try
             {
-                return false;
+                // 检索注册表子项
+                using RegistryKey? sKey = OpenSubKey(subKey, regMain);
+
+                // 如果 sKey 为 null，则说明该注册表项不存在；否则存在
+                return sKey != null;
             }
-            return true;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of subkey '{subKey}' under hive '{regMain}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项是否存在失败
         }
         #endregion
 
@@ -516,37 +526,40 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回键值是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsRegeditKeyExist()
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断是否设置键值属性
-            if (_regeditkey == string.Empty || _regeditkey == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(_regeditkey))
             {
                 return false;
             }
 
-            ///判断注册表项是否存在
-            if (IsSubKeyExist())
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey();
-                ///键值集合
-                string[] regeditKeyNames;
-                ///获取键值集合
-                regeditKeyNames = key.GetValueNames();
-                ///遍历键值集合，如果存在键值，则退出遍历
-                foreach (string regeditKey in regeditKeyNames)
+                // 判断注册表项是否存在
+                if (IsSubKeyExist())
                 {
-                    if (string.Compare(regeditKey, _regeditkey, true) == 0)
+                    // 打开注册表项
+                    using RegistryKey? key = OpenSubKey();
+
+                    // 键值集合
+                    string[] regeditKeyNames = key!.GetValueNames();
+
+                    // 遍历键值集合，如果存在键值，则退出遍历
+                    foreach (string regeditKey in regeditKeyNames)
                     {
-                        result = true;
-                        break;
+                        if (string.Compare(regeditKey, _regeditkey, true) == 0)
+                        {
+                            return true;
+                        }
                     }
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return result;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of regedit key '{_regeditkey}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项或键值是否存在失败
         }
 
         ///  <summary>
@@ -558,37 +571,40 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回键值是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsRegeditKeyExist(string name)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
-            ///判断注册表项是否存在
-            if (IsSubKeyExist())
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey();
-                ///键值集合
-                string[] regeditKeyNames;
-                ///获取键值集合
-                regeditKeyNames = key.GetValueNames();
-                ///遍历键值集合，如果存在键值，则退出遍历
-                foreach (string regeditKey in regeditKeyNames)
+                // 判断注册表项是否存在
+                if (IsSubKeyExist())
                 {
-                    if (string.Compare(regeditKey, name, true) == 0)
+                    // 打开注册表项
+                    using RegistryKey? key = OpenSubKey();
+
+                    // 键值集合
+                    string[] regeditKeyNames = key!.GetValueNames();
+
+                    // 遍历键值集合，如果存在键值，则退出遍历
+                    foreach (string regeditKey in regeditKeyNames)
                     {
-                        result = true;
-                        break;
+                        if (string.Compare(regeditKey, name, true) == 0)
+                        {
+                            return true;
+                        }
                     }
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return result;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of regedit key '{name}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项或键值是否存在失败
         }
 
         ///  <summary>
@@ -598,40 +614,42 @@ namespace YueHuan.Systemaitc
         ///  <param name="name">键值名称</param>
         ///  <param name="subKey">注册表项名称</param>
         ///  <returns>返回键值是否存在，存在返回 true，否则返回 false</returns>
-        public virtual bool IsRegeditKeyExist(string name, string
-      subKey)
+        public virtual bool IsRegeditKeyExist(string name, string subKey)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
-            ///判断注册表项是否存在
-            if (IsSubKeyExist())
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey(subKey);
-                ///键值集合
-                string[] regeditKeyNames;
-                ///获取键值集合
-                regeditKeyNames = key.GetValueNames();
-                ///遍历键值集合，如果存在键值，则退出遍历
-                foreach (string regeditKey in regeditKeyNames)
+                // 判断注册表项是否存在
+                if (IsSubKeyExist(subKey))
                 {
-                    if (string.Compare(regeditKey, name, true) == 0)
+                    // 打开注册表项
+                    using RegistryKey? key = OpenSubKey(subKey);
+
+                    // 键值集合
+                    string[] regeditKeyNames = key!.GetValueNames();
+
+                    // 遍历键值集合，如果存在键值，则退出遍历
+                    foreach (string regeditKey in regeditKeyNames)
                     {
-                        result = true;
-                        break;
+                        if (string.Compare(regeditKey, name, true) == 0)
+                        {
+                            return true;
+                        }
                     }
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return result;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of regedit key '{name}' under subkey '{subKey}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项或键值是否存在失败
         }
 
         ///  <summary>
@@ -644,37 +662,40 @@ namespace YueHuan.Systemaitc
         ///  <returns>返回键值是否存在，存在返回 true，否则返回 false</returns>
         public virtual bool IsRegeditKeyExist(string name, string subKey, RegistryHive regMain)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
-            ///判断注册表项是否存在
-            if (IsSubKeyExist())
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey(subKey, regMain);
-                ///键值集合
-                string[] regeditKeyNames;
-                ///获取键值集合
-                regeditKeyNames = key.GetValueNames();
-                ///遍历键值集合，如果存在键值，则退出遍历
-                foreach (string regeditKey in regeditKeyNames)
+                // 判断注册表项是否存在
+                if (IsSubKeyExist(subKey, regMain))
                 {
-                    if (string.Compare(regeditKey, name, true) == 0)
+                    // 打开注册表项
+                    using RegistryKey? key = OpenSubKey(subKey, regMain);
+
+                    // 键值集合
+                    string[] regeditKeyNames = key!.GetValueNames();
+
+                    // 遍历键值集合，如果存在键值，则退出遍历
+                    foreach (string regeditKey in regeditKeyNames)
                     {
-                        result = true;
-                        break;
+                        if (string.Compare(regeditKey, name, true) == 0)
+                        {
+                            return true;
+                        }
                     }
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return result;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to check existence of regedit key '{name}' under subkey '{subKey}' of hive '{regMain}': {ex.Message}");
+            }
+
+            return false; // 返回 false，表明检查注册表项或键值是否存在失败
         }
         #endregion
 
@@ -689,46 +710,40 @@ namespace YueHuan.Systemaitc
         ///  <returns>键值内容设置成功，则返回 true，否则返回 false</returns>
         public virtual bool WriteRegeditKey(object content)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断是否设置键值属性
-            if (_regeditkey == string.Empty || _regeditkey == null)
-            {
-                return false;
-            }
-
-            ///判断注册表项是否存在，如果不存在，则直接创建
-            if (!IsSubKeyExist(_subkey))
-            {
-                CreateSubKey(_subkey);
-            }
-
-            ///以可写方式打开注册表项
-            RegistryKey key = OpenSubKey(true);
-
-            ///如果注册表项打开失败，则返回 false
-            if (key == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(_regeditkey))
             {
                 return false;
             }
 
             try
             {
+                // 判断注册表项是否存在，如果不存在，则直接创建
+                if (!IsSubKeyExist(_subkey))
+                {
+                    CreateSubKey(_subkey);
+                }
+
+                // 以可写方式打开注册表项
+                using RegistryKey? key = OpenSubKey(true);
+
+                // 如果注册表项打开失败，则返回 false
+                if (key == null)
+                {
+                    return false;
+                }
+
                 key.SetValue(_regeditkey, content);
-                result = true;
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                result = false;
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to write content '{content}' to regedit key '{_regeditkey}': {ex.Message}");
+                return false; // 返回 false，表明写入注册表项失败
             }
-            finally
-            {
-                ///关闭对注册表项的更改
-                key.Close();
-            }
-            return result;
         }
+
         ///  <summary>
         ///  设置指定的键值内容，不指定内容数据类型（请先设置 SubKey 属性）
         ///  存在改键值则修改键值内容，不存在键值则先创建键值，再设置键值内容
@@ -741,45 +756,38 @@ namespace YueHuan.Systemaitc
         ///  <returns>键值内容设置成功，则返回 true，否则返回 false</returns>
         public virtual bool WriteRegeditKey(string name, object content)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断键值是否存在
-            if (name == string.Empty || name == null)
-            {
-                return false;
-            }
-
-            ///判断注册表项是否存在，如果不存在，则直接创建
-            if (!IsSubKeyExist(_subkey))
-            {
-                CreateSubKey(_subkey);
-            }
-
-            ///以可写方式打开注册表项
-            RegistryKey key = OpenSubKey(true);
-
-            ///如果注册表项打开失败，则返回 false
-            if (key == null)
+            // 判断键值是否存在
+            if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
             try
             {
+                // 判断注册表项是否存在，如果不存在，则直接创建
+                if (!IsSubKeyExist(_subkey))
+                {
+                    CreateSubKey(_subkey);
+                }
+
+                // 以可写方式打开注册表项
+                using RegistryKey? key = OpenSubKey(true);
+
+                // 如果注册表项打开失败，则返回 false
+                if (key == null)
+                {
+                    return false;
+                }
+
                 key.SetValue(name, content);
-                result = true;
+                return true;
             }
             catch (Exception ex)
             {
-                result = false;
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to write content '{content}' to regedit key '{name}': {ex.Message}");
+                return false; // 返回 false，表明写入注册表项失败
             }
-            finally
-            {
-                ///关闭对注册表项的更改
-                key.Close();
-            }
-            return result;
         }
 
         ///  <summary>
@@ -793,28 +801,25 @@ namespace YueHuan.Systemaitc
         ///  <param name="name">键值名称</param>
         ///  <param name="content">键值内容</param>
         ///  <returns>键值内容设置成功，则返回 true，否则返回 false</returns>
-        public virtual bool WriteRegeditKey(string name, object content, RegistryValueKind regValueKind)
+        public bool WriteRegeditKey(string name, object content, RegistryValueKind regValueKind)
         {
-            ///返回结果
-            bool result = false;
-
-            ///判断键值是否存在
-            if (name == string.Empty || name == null)
+            // 判断键值是否为空
+            if (name is null or "")
             {
                 return false;
             }
 
-            ///判断注册表项是否存在，如果不存在，则直接创建
+            // 判断注册表项是否存在，如果不存在，则直接创建
             if (!IsSubKeyExist(_subkey))
             {
                 CreateSubKey(_subkey);
             }
 
-            ///以可写方式打开注册表项
-            RegistryKey key = OpenSubKey(true);
+            // 以可写方式打开注册表项
+            using RegistryKey? key = OpenSubKey(true);
 
-            ///如果注册表项打开失败，则返回 false
-            if (key == null)
+            // 如果注册表项打开失败，则返回 false
+            if (key is null)
             {
                 return false;
             }
@@ -822,19 +827,14 @@ namespace YueHuan.Systemaitc
             try
             {
                 key.SetValue(name, content, GetRegValueKind(regValueKind));
-                result = true;
+                return true;
             }
             catch
             {
-                result = false;
+                return false;
             }
-            finally
-            {
-                ///关闭对注册表项的更改
-                key.Close();
-            }
-            return result;
         }
+
         #endregion
 
         #region  读取键值内容
@@ -845,30 +845,31 @@ namespace YueHuan.Systemaitc
         ///3.反之，则返回键值内容
         ///  </summary>
         ///  <returns>返回键值内容</returns>
-        public virtual object ReadRegeditKey()
+        public virtual object? ReadRegeditKey()
         {
-            ///键值内容结果
-            object obj = null;
-
-            ///判断是否设置键值属性
-            if (_regeditkey == string.Empty || _regeditkey == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(_regeditkey))
             {
                 return null;
             }
 
-            ///判断键值是否存在
-            if (IsRegeditKeyExist(_regeditkey))
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey();
+                // 打开默认的注册表项
+                using RegistryKey? key = OpenSubKey();
                 if (key != null)
                 {
-                    obj = key.GetValue(_regeditkey);
+                    // 读取键值内容结果
+                    return key.GetValue(_regeditkey);
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return obj;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to read registry key '{_regeditkey}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有读到键值内容
         }
 
         ///  <summary>
@@ -878,30 +879,31 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         ///  <param name="name">键值名称</param>
         ///  <returns>返回键值内容</returns>
-        public virtual object ReadRegeditKey(string name)
+        public virtual object? ReadRegeditKey(string name)
         {
-            ///键值内容结果
-            object obj = null;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
-            ///判断键值是否存在
-            if (IsRegeditKeyExist(name))
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey();
+                // 打开默认的注册表项
+                using RegistryKey? key = OpenSubKey();
                 if (key != null)
                 {
-                    obj = key.GetValue(name);
+                    // 读取键值内容结果
+                    return key.GetValue(name);
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return obj;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to read registry key '{name}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有读到键值内容
         }
 
         ///  <summary>
@@ -910,30 +912,30 @@ namespace YueHuan.Systemaitc
         ///  <param name="name">键值名称</param>
         ///  <param name="subKey">注册表项名称</param>
         ///  <returns>返回键值内容</returns>
-        public virtual object ReadRegeditKey(string name, string subKey)
+        public virtual object? ReadRegeditKey(string name, string subKey)
         {
-            ///键值内容结果
-            object obj = null;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
-            ///判断键值是否存在
-            if (IsRegeditKeyExist(name))
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey(subKey);
+                // 打开注册表项
+                using RegistryKey? key = OpenSubKey(subKey);
                 if (key != null)
                 {
-                    obj = key.GetValue(name);
+                    // 读取键值内容结果
+                    return key.GetValue(name);
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return obj;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to read registry key '{name}' under subkey '{subKey}': {ex.Message}");
+            }
+            return null; // 返回空对象，表明没有读到键值内容
         }
 
         ///  <summary>
@@ -943,30 +945,31 @@ namespace YueHuan.Systemaitc
         ///  <param name="subKey">注册表项名称</param>
         ///  <param name="regMain">注册表基项域</param>
         ///  <returns>返回键值内容</returns>
-        public virtual object ReadRegeditKey(string name, string subKey, RegistryHive regMain)
+        public virtual object? ReadRegeditKey(string name, string subKey, RegistryHive regMain)
         {
-            ///键值内容结果
-            object obj = null;
-
-            ///判断是否设置键值属性
-            if (name == string.Empty || name == null)
+            // 判断是否设置键值属性
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
-            ///判断键值是否存在
-            if (IsRegeditKeyExist(name))
+            try
             {
-                ///打开注册表项
-                RegistryKey key = OpenSubKey(subKey, regMain);
+                // 打开注册表项
+                using RegistryKey? key = OpenSubKey(subKey, regMain);
                 if (key != null)
                 {
-                    obj = key.GetValue(name);
+                    // 读取键值内容结果
+                    return key.GetValue(name);
                 }
-                ///关闭对注册表项的更改
-                key.Close();
             }
-            return obj;
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to read registry key '{name}' under subkey '{subKey}' of hive '{regMain}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有读到键值内容
         }
         #endregion
 
@@ -992,7 +995,7 @@ namespace YueHuan.Systemaitc
             if (IsRegeditKeyExist(_regeditkey))
             {
                 ///以可写方式打开注册表项
-                RegistryKey key = OpenSubKey(true);
+                RegistryKey? key = OpenSubKey(true);
                 if (key != null)
                 {
                     try
@@ -1037,7 +1040,7 @@ namespace YueHuan.Systemaitc
             if (IsRegeditKeyExist(name))
             {
                 ///以可写方式打开注册表项
-                RegistryKey key = OpenSubKey(true);
+                RegistryKey? key = OpenSubKey(true);
                 if (key != null)
                 {
                     try
@@ -1082,7 +1085,7 @@ namespace YueHuan.Systemaitc
             if (IsRegeditKeyExist(name))
             {
                 ///以可写方式打开注册表项
-                RegistryKey key = OpenSubKey(subKey, true);
+                RegistryKey? key = OpenSubKey(subKey, true);
                 if (key != null)
                 {
                     try
@@ -1128,7 +1131,7 @@ namespace YueHuan.Systemaitc
             if (IsRegeditKeyExist(name))
             {
                 ///以可写方式打开注册表项
-                RegistryKey key = OpenSubKey(subKey, regMain, true);
+                RegistryKey? key = OpenSubKey(subKey, regMain, true);
                 if (key != null)
                 {
                     try
@@ -1163,31 +1166,14 @@ namespace YueHuan.Systemaitc
         ///  <returns>注册表基项域对应顶级节点</returns>
         protected static RegistryKey GetRegMain(RegistryHive regMain)
         {
-            ///创建基于注册表基项的节点
-            RegistryKey key;
-
-            #region  判断注册表基项域
-            switch (regMain)
+            return regMain switch
             {
-                case RegistryHive.ClassesRoot:
-                    key = Registry.ClassesRoot;
-                    break;
-                case RegistryHive.CurrentUser:
-                    key = Registry.CurrentUser;
-                    break;
-                case RegistryHive.LocalMachine:
-                    key = Registry.LocalMachine;
-                    break;
-                case RegistryHive.CurrentConfig:
-                    key = Registry.CurrentConfig;
-                    break;
-                default:
-                    key = Registry.LocalMachine;
-                    break;
-            }
-            #endregion
-
-            return key;
+                RegistryHive.ClassesRoot => Registry.ClassesRoot,
+                RegistryHive.CurrentUser => Registry.CurrentUser,
+                RegistryHive.LocalMachine => Registry.LocalMachine,
+                RegistryHive.CurrentConfig => Registry.CurrentConfig,
+                _ => Registry.LocalMachine,
+            };
         }
 
         ///  <summary>
@@ -1198,40 +1184,19 @@ namespace YueHuan.Systemaitc
         ///  <returns>注册表中对应的数据类型</returns>
         protected static Microsoft.Win32.RegistryValueKind GetRegValueKind(RegistryValueKind regValueKind)
         {
-            Microsoft.Win32.RegistryValueKind regValueK;
-
-            #region  判断注册表数据类型
-            switch (regValueKind)
+            return regValueKind switch
             {
-                case RegistryValueKind.Unknown:
-                    regValueK = Microsoft.Win32.RegistryValueKind.Unknown;
-                    break;
-                case RegistryValueKind.String:
-                    regValueK = Microsoft.Win32.RegistryValueKind.String;
-                    break;
-                case RegistryValueKind.ExpandString:
-                    regValueK = Microsoft.Win32.RegistryValueKind.ExpandString;
-                    break;
-                case RegistryValueKind.Binary:
-                    regValueK = Microsoft.Win32.RegistryValueKind.Binary;
-                    break;
-                case RegistryValueKind.DWord:
-
-                    regValueK = Microsoft.Win32.RegistryValueKind.DWord;
-                    break;
-                case RegistryValueKind.MultiString:
-                    regValueK = Microsoft.Win32.RegistryValueKind.MultiString;
-                    break;
-                case RegistryValueKind.QWord:
-                    regValueK = Microsoft.Win32.RegistryValueKind.QWord;
-                    break;
-                default:
-                    regValueK = Microsoft.Win32.RegistryValueKind.String;
-                    break;
-            }
-            #endregion
-            return regValueK;
+                RegistryValueKind.Unknown => Microsoft.Win32.RegistryValueKind.Unknown,
+                RegistryValueKind.String => Microsoft.Win32.RegistryValueKind.String,
+                RegistryValueKind.ExpandString => Microsoft.Win32.RegistryValueKind.ExpandString,
+                RegistryValueKind.Binary => Microsoft.Win32.RegistryValueKind.Binary,
+                RegistryValueKind.DWord => Microsoft.Win32.RegistryValueKind.DWord,
+                RegistryValueKind.MultiString => Microsoft.Win32.RegistryValueKind.MultiString,
+                RegistryValueKind.QWord => Microsoft.Win32.RegistryValueKind.QWord,
+                _ => Microsoft.Win32.RegistryValueKind.String,
+            };
         }
+
 
         #region  打开注册表项
         ///  <summary>
@@ -1239,25 +1204,32 @@ namespace YueHuan.Systemaitc
         ///  虚方法，子类可进行重写
         ///  </summary>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey()
+        protected virtual RegistryKey? OpenSubKey()
         {
-            ///判断注册表项名称是否为空
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
+            try
+            {
+                // 创建基于注册表基项的节点
+                using RegistryKey key = GetRegMain(_domain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(_subkey);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(_subkey);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{_subkey}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
 
         ///  <summary>
@@ -1266,25 +1238,32 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         ///  <param name="writable">如果需要项的写访问权限，则设置为true</param>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey(bool writable)
+        protected virtual RegistryKey? OpenSubKey(bool writable)
         {
-            ///判断注册表项名称是否为空
-            if (_subkey == string.Empty || _subkey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(_subkey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
+            try
+            {
+                // 创建基于注册表基项的节点
+                using RegistryKey key = GetRegMain(_domain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(_subkey, writable);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(_subkey, writable);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{_subkey}' with {(writable ? "write" : "read")} access: {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
 
         ///  <summary>
@@ -1293,25 +1272,32 @@ namespace YueHuan.Systemaitc
         ///  </summary>
         ///  <param name="subKey">注册表项名称</param>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey(string subKey)
+        protected virtual RegistryKey? OpenSubKey(string subKey)
         {
-            ///判断注册表项名称是否为空
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(subKey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
+            try
+            {
+                // 创建基于注册表基项的节点
+                using RegistryKey key = GetRegMain(_domain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(subKey);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(subKey);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{subKey}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
 
         ///  <summary>
@@ -1321,25 +1307,32 @@ namespace YueHuan.Systemaitc
         ///  <param name="subKey">注册表项名称</param>
         ///  <param name="writable">如果需要项的写访问权限，则设置为true</param>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey(string subKey, bool writable)
+        protected virtual RegistryKey? OpenSubKey(string subKey, bool writable)
         {
-            ///判断注册表项名称是否为空
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(subKey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(_domain);
+            try
+            {
+                // 创建基于注册表基项的节点
+                using RegistryKey key = GetRegMain(_domain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(subKey, writable);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(subKey, writable);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{subKey}' with {(writable ? "write" : "read")} access: {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
 
         ///  <summary>
@@ -1349,25 +1342,32 @@ namespace YueHuan.Systemaitc
         ///  <param name="subKey">注册表项名称</param>
         ///  <param name="regMain">注册表基项域</param>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey(string subKey, RegistryHive regMain)
+        protected virtual RegistryKey? OpenSubKey(string subKey, RegistryHive regMain)
         {
-            ///判断注册表项名称是否为空
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(subKey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(regMain);
+            try
+            {
+                // 创建基于指定主键的节点
+                using RegistryKey key = GetRegMain(regMain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(subKey);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(subKey);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{subKey}' under hive '{regMain}': {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
 
         ///  <summary>
@@ -1378,25 +1378,32 @@ namespace YueHuan.Systemaitc
         ///  <param name="regMain">注册表基项域</param>
         ///  <param name="writable">如果需要项的写访问权限，则设置为true</param>
         ///  <returns>如果 SubKey 为空、 null 或者 SubKey 指示注册表项不存在，则返回 null，否则返回注册表节点</returns>
-        protected virtual RegistryKey OpenSubKey(string subKey, RegistryHive regMain, bool writable)
+        protected virtual RegistryKey? OpenSubKey(string subKey, RegistryHive regMain, bool writable)
         {
-            ///判断注册表项名称是否为空
-            if (subKey == string.Empty || subKey == null)
+            // 判断注册表项名称是否为空
+            if (string.IsNullOrEmpty(subKey))
             {
                 return null;
             }
 
-            ///创建基于注册表基项的节点
-            RegistryKey key = GetRegMain(regMain);
+            try
+            {
+                // 创建基于指定主键的节点
+                using RegistryKey key = GetRegMain(regMain);
 
-            ///要打开的注册表项的节点
-            RegistryKey sKey = null;
-            ///打开注册表项
-            sKey = key.OpenSubKey(subKey, writable);
-            ///关闭对注册表项的更改
-            key.Close();
-            ///返回注册表节点
-            return sKey;
+                // 打开注册表项
+                RegistryKey? sKey = key.OpenSubKey(subKey, writable);
+
+                // 返回注册表节点
+                return sKey;
+            }
+            catch (Exception ex)
+            {
+                // 捕捉并记录可能出现的异常
+                Console.WriteLine($"Failed to open subkey '{subKey}' under hive '{regMain}' with {(writable ? "write" : "read")} access: {ex.Message}");
+            }
+
+            return null; // 返回空对象，表明没有打开注册表项
         }
         #endregion
         #endregion
