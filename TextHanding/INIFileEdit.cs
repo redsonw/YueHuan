@@ -39,7 +39,7 @@ namespace YueHuan.System
         public static string Read(string section, string key, string def, string filePath)
         {
             StringBuilder strBuilder = new(1024);
-            GetPrivateProfileString(section,key, def, strBuilder, 1024, filePath);
+            GetPrivateProfileString(section, key, def, strBuilder, 1024, filePath);
             return strBuilder.ToString();
         }
 
